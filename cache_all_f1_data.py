@@ -24,7 +24,7 @@ def cache_season_data(season):
                 print(f"    Error caching session {session_name}: {e}")
 
 def main():
-    for season in range(2024, 2024):
+    for season in range(2023, 2024):
         print(f"Caching season {season}")
         cache_season_data(season)
     print("All data cached successfully.")
