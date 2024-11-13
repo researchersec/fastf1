@@ -1,0 +1,38 @@
+name: Cache F1 Data
+
+on:
+  workflow_dispatch: 
+  schedule:
+    - cron: "0 0 * * 0"  # Runs every Sunday at midnight (UTC)
+
+jobs:
+  cache_f1_data:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11' 
+
+    - name: Install FastF1 and dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install fastf1 pandas
+
+    - name: Run data caching script
+      run: |
+        python cache_all_f1_data.py
+
+    - name: Commit and push cache data
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add cache/
+        git commit -m "Update F1 data cache [skip ci]" || echo "No changes to commit"
+        git push origin main
